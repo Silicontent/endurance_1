@@ -1,0 +1,5 @@
+Normal Enemy
+enemy
+This is the most common enemy you'll see while playing. The normal enemy doesn't have a whole lot going on: it just follows you at a moderate speed.
+
+The main unique thing about this enemy is its ability to come in different sizes.

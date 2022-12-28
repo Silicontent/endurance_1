@@ -1,0 +1,198 @@
+[gd_scene load_steps=28 format=2]
+
+[ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scripts/Game.gd" type="Script" id=2]
+[ext_resource path="res://scenes/GameOver.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/boss/ChonkBoss.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/HUD.tscn" type="PackedScene" id=5]
+[ext_resource path="res://audio/death.wav" type="AudioStream" id=6]
+[ext_resource path="res://scripts/enemy/EnemyManager.gd" type="Script" id=7]
+[ext_resource path="res://scenes/enemy/ImposterEnemy.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/enemy/SlowEnemy.tscn" type="PackedScene" id=9]
+[ext_resource path="res://scripts/boss/BossManager.gd" type="Script" id=10]
+[ext_resource path="res://scenes/enemy/NormalEnemy.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scenes/enemy/FastEnemy.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scripts/powerup/PowerupManager.gd" type="Script" id=13]
+[ext_resource path="res://scenes/powerup/ScreenWipe_Powerup.tscn" type="PackedScene" id=14]
+[ext_resource path="res://scenes/powerup/TimeSlow_Powerup.tscn" type="PackedScene" id=15]
+[ext_resource path="res://assets/extra_effects/vignette.png" type="Texture" id=16]
+[ext_resource path="res://scenes/powerup/SameColor_Powerup.tscn" type="PackedScene" id=17]
+[ext_resource path="res://scenes/powerup/CooldownReset_Powerup.tscn" type="PackedScene" id=18]
+[ext_resource path="res://scenes/powerup/InvertControls_Powerup.tscn" type="PackedScene" id=19]
+[ext_resource path="res://scenes/powerup/SpawnBoss_Powerup.tscn" type="PackedScene" id=20]
+[ext_resource path="res://scenes/enemy/ToughEnemy.tscn" type="PackedScene" id=21]
+[ext_resource path="res://scenes/enemy/DealerEnemy.tscn" type="PackedScene" id=22]
+[ext_resource path="res://scenes/PauseMenu.tscn" type="PackedScene" id=23]
+[ext_resource path="res://scenes/powerup/PowerupHUD.tscn" type="PackedScene" id=24]
+
+[sub_resource type="Animation" id=2]
+resource_name = "screen_wipe_flash"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.7 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.7 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1280, 0, 0, 0, 0, 0, 1280, 720, 0, 0, 0, 0, 0, 720, 0, 0, 0, 0, 0, 0 )
+}
+
+[sub_resource type="Curve2D" id=3]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 96, 80, 0, 0, 0, 0, 96, 640, 0, 0, 0, 0, 1184, 640, 0, 0, 0, 0, 1184, 80, 0, 0, 0, 0, 96, 80 )
+}
+
+[node name="Game" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="Background" type="ColorRect" parent="."]
+margin_right = 1280.0
+margin_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 640, 360 )
+
+[node name="PowerupManager" type="Node2D" parent="."]
+script = ExtResource( 13 )
+ScreenWipe = ExtResource( 14 )
+TimeSlow = ExtResource( 15 )
+SameColor = ExtResource( 17 )
+CooldownReset = ExtResource( 18 )
+InvertControls = ExtResource( 19 )
+SpawnBoss = ExtResource( 20 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="PowerupManager"]
+
+[node name="Flash" type="ColorRect" parent="PowerupManager/CanvasLayer"]
+visible = false
+margin_right = 1280.0
+margin_bottom = 720.0
+color = Color( 1, 1, 1, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PowerupManager/CanvasLayer/Flash"]
+anims/screen_wipe_flash = SubResource( 2 )
+
+[node name="Vignette" type="TextureRect" parent="PowerupManager/CanvasLayer"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 16 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EnemyManager" type="Node2D" parent="."]
+script = ExtResource( 7 )
+NormalEnemy = ExtResource( 11 )
+FastEnemy = ExtResource( 12 )
+SlowEnemy = ExtResource( 9 )
+ImposterEnemy = ExtResource( 8 )
+ToughEnemy = ExtResource( 21 )
+DealerEnemy = ExtResource( 22 )
+
+[node name="Enemy_Path" type="Path2D" parent="EnemyManager"]
+curve = SubResource( 1 )
+
+[node name="Enemy_Spawn" type="PathFollow2D" parent="EnemyManager/Enemy_Path"]
+rotate = false
+
+[node name="Dealer_Path" type="Path2D" parent="EnemyManager"]
+curve = SubResource( 3 )
+
+[node name="Dealer_Spawn" type="PathFollow2D" parent="EnemyManager/Dealer_Path"]
+position = Vector2( 96, 80 )
+rotation = 1.5708
+
+[node name="BossManager" type="Node2D" parent="."]
+script = ExtResource( 10 )
+ChonkBoss = ExtResource( 4 )
+
+[node name="Timers" type="Node2D" parent="."]
+
+[node name="EnemyTimer" type="Timer" parent="Timers"]
+wait_time = 1.5
+
+[node name="ScoreTimer" type="Timer" parent="Timers"]
+wait_time = 0.5
+autostart = true
+
+[node name="PowerupTimer" type="Timer" parent="Timers"]
+wait_time = 15.0
+one_shot = true
+
+[node name="SameColorTimer" type="Timer" parent="Timers"]
+wait_time = 10.0
+one_shot = true
+
+[node name="PowerupHUD" parent="." instance=ExtResource( 24 )]
+
+[node name="GameOver" parent="." instance=ExtResource( 3 )]
+offset = Vector2( -1300, 0 )
+transform = Transform2D( 1, 0, 0, 1, -1300, 0 )
+
+[node name="PauseMenu" parent="." instance=ExtResource( 23 )]
+offset = Vector2( -1300, 0 )
+transform = Transform2D( 1, 0, 0, 1, -1300, 0 )
+
+[node name="HUD" parent="." instance=ExtResource( 5 )]
+
+[node name="Death_sound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 6 )
+volume_db = -5.0
+
+[connection signal="boss_damaged" from="Player" to="." method="_on_bossDamaged"]
+[connection signal="boss_damaged" from="Player" to="BossManager" method="_on_bossDamaged"]
+[connection signal="dealer_killed" from="Player" to="." method="_on_dealerKilled"]
+[connection signal="enemy_killed" from="Player" to="EnemyManager" method="_on_enemyKilled"]
+[connection signal="game_over" from="Player" to="." method="_on_gameOver"]
+[connection signal="powerup_collected" from="Player" to="PowerupManager" method="_on_powerupCollected"]
+[connection signal="score_up" from="Player" to="." method="_on_scoreUp"]
+[connection signal="cooldown_reset" from="PowerupManager" to="Player" method="_on_cooldownResetActivated"]
+[connection signal="cooldown_reset" from="PowerupManager" to="PowerupHUD" method="_on_cooldownReset"]
+[connection signal="invert_controls" from="PowerupManager" to="Player" method="_on_invertControlsActivated"]
+[connection signal="invert_controls" from="PowerupManager" to="PowerupHUD" method="_on_invertControls"]
+[connection signal="same_color" from="PowerupManager" to="." method="_on_sameColorActivated"]
+[connection signal="same_color" from="PowerupManager" to="EnemyManager" method="_on_sameColor"]
+[connection signal="same_color" from="PowerupManager" to="PowerupHUD" method="_on_sameColor"]
+[connection signal="screen_wipe" from="PowerupManager" to="EnemyManager" method="_on_screenWipe"]
+[connection signal="screen_wipe" from="PowerupManager" to="PowerupHUD" method="_on_screenWipe"]
+[connection signal="spawn_boss_activate" from="PowerupManager" to="." method="_on_spawnBossActivated"]
+[connection signal="spawn_boss_activate" from="PowerupManager" to="PowerupHUD" method="_on_spawnBoss"]
+[connection signal="time_slow" from="PowerupManager" to="." method="_on_timeSlowActivated"]
+[connection signal="time_slow" from="PowerupManager" to="PowerupHUD" method="_on_timeSlow"]
+[connection signal="dealer_spawned" from="EnemyManager" to="." method="_on_dealerSpawned"]
+[connection signal="boss_time" from="BossManager" to="." method="_on_bossSpawned"]
+[connection signal="kill_boss" from="BossManager" to="." method="_on_bossDead"]
+[connection signal="kill_boss" from="BossManager" to="Player" method="_on_bossDead"]
+[connection signal="timeout" from="Timers/EnemyTimer" to="." method="_on_enemyTimeout"]
+[connection signal="timeout" from="Timers/ScoreTimer" to="." method="_on_addScore"]
+[connection signal="timeout" from="Timers/PowerupTimer" to="." method="_on_powerupTimeout"]
+[connection signal="unpause" from="PauseMenu" to="." method="pause_game"]
+[connection signal="pause_game" from="HUD" to="." method="pause_game"]
